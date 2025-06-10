@@ -1,0 +1,110 @@
+import numpy as np
+from scipy.special import comb
+
+traditions = {
+    'Veneto_Dialect': [0.9, 0.3],
+    'Italian_Recipes': [0.8, 0.2],
+    'Choral_Singing': [0.6, 0.4],
+    'Family_Eating': [0.9, 0.15],
+    'Catholic_Traditions': [0.7, 0.25]
+}
+
+generations = ['Great Grandma', 'Grandma', 'Mom', 'Me']
+
+def survival_prob(initial_strength, decay_rate, generation):
+    return initial_strength * np.exp(-decay_rate * generation)
+
+all_probs = {}
+for gen_idx, gen_name in enumerate(generations):
+    all_probs[gen_name] = {}
+    for trad_name, params in traditions.items():
+        prob = survival_prob(params[0], params[1], gen_idx)
+        all_probs[gen_name][trad_name] = prob
+
+for gen_name in generations:
+    print(f"\n{gen_name}:")
+    for trad_name in traditions.keys():
+        prob = all_probs[gen_name][trad_name]
+        print(f"  {trad_name.replace('_', ' ')}: {prob:.4f}")
+
+for gen_name in generations:
+    joint_prob = 1.0
+    for trad_name in traditions.keys():
+        joint_prob *= all_probs[gen_name][trad_name]
+    print(f"{gen_name}: {joint_prob:.6f}")
+
+for gen_name in generations:
+    # P(A and B) / P(B) = P(A|B), but since independent: P(A|B) = P(A)
+    recipes_prob = all_probs[gen_name]['Italian_Recipes']
+    dialect_prob = all_probs[gen_name]['Veneto_Dialect']
+    conditional_prob = (recipes_prob * dialect_prob) / dialect_prob  # This equals recipes_prob
+    print(f"{gen_name}: {conditional_prob:.4f}")
+
+n_children = 2
+mom_gen_idx = 2  # Mom is index 2
+
+for trad_name, params in traditions.items():
+    p = survival_prob(params[0], params[1], mom_gen_idx)
+    expected = n_children * p
+    variance = n_children * p * (1 - p)
+    std_dev = np.sqrt(variance)
+    print(f"{trad_name.replace('_', ' ')}: {expected:.2f} ± {std_dev:.2f}")
+
+recipes_params = traditions['Italian_Recipes']
+p_recipes = survival_prob(recipes_params[0], recipes_params[1], 2)
+n_kids = 3
+
+for k in range(n_kids + 1):
+    prob = comb(n_kids, k) * (p_recipes**k) * ((1-p_recipes)**(n_kids-k))
+    print(f"P({k} children inherit recipes) = {prob:.4f}")
+
+for trad_name, params in traditions.items():
+    p = survival_prob(params[0], params[1], 2)
+    print(f"\n{trad_name.replace('_', ' ')} (p = {p:.3f}):")
+    for k in range(3):  # 0, 1, 2 children
+        prob = comb(2, k) * (p**k) * ((1-p)**(2-k))
+        print(f"  P({k} children inherit) = {prob:.4f}")
+
+for trad_name, params in traditions.items():
+    print(f"{trad_name.replace('_', ' ')}: {params[1]:.2f}")
+
+me_probs = []
+for trad_name, params in traditions.items():
+    prob = survival_prob(params[0], params[1], 3)
+    me_probs.append([trad_name, prob])
+
+me_probs.sort(key=lambda x: x[1], reverse=True)
+
+for i, (trad_name, prob) in enumerate(me_probs):
+    print(f"{i+1}. {trad_name.replace('_', ' ')}: {prob:.4f}")
+
+
+family_params = traditions['Family_Eating']
+dialect_params = traditions['Veneto_Dialect']
+
+family_survival = survival_prob(family_params[0], family_params[1], 3)
+dialect_survival = survival_prob(dialect_params[0], dialect_params[1], 3)
+
+print(f"Family eating survival: {family_survival:.4f}")
+print(f"Dialect survival: {dialect_survival:.4f}")
+print(f"Difference: {abs(family_survival - dialect_survival):.4f}")
+
+if abs(family_survival - dialect_survival) > 0.1:
+    print("Result: Significant difference detected")
+else:
+    print("Result: No significant difference")
+
+prob_none_survive = 1.0
+for trad_name, params in traditions.items():
+    prob_survive = survival_prob(params[0], params[1], 3)
+    prob_none_survive *= (1 - prob_survive)
+
+prob_at_least_one = 1 - prob_none_survive
+print(f"P(at least one tradition survives to Me): {prob_at_least_one:.4f}")
+
+for gen_idx, gen_name in enumerate(generations):
+    expected_survivors = 0
+    for trad_name, params in traditions.items():
+        prob = survival_prob(params[0], params[1], gen_idx)
+        expected_survivors += prob
+    print(f"{gen_name}: {expected_survivors:.2f} out of 5 traditions")
