@@ -2,15 +2,15 @@
 
 *A CS 109 Challenge Project by Alice Dos Santos - June 2025*
 
-## 🌍 Project Overview
+## Project Overview
 
 This project explores how cultural knowledge survives (or dies) as it passes through generations of immigrant families, using my own family's Italian-Brazilian-American heritage as a case study. Through probabilistic modeling and information theory, I analyze the transmission patterns of cultural traditions across four generations.
 
-## 🔬 Research Question
+## Research Question
 
 **How does cultural knowledge survive (or die) as it passes through generations of immigrant families, and what factors determine transmission success?**
 
-## 📊 Methodology
+## Methodology
 
 ### Family Background
 - **0th Generation**: Great-grandparents from Veneto, Italy
@@ -37,7 +37,7 @@ Each child represents an independent Bernoulli trial for tradition inheritance:
 - **Information Decay**: Measures cultural information loss over time
 - **Vulnerability Assessment**: Identifies traditions most at risk
 
-## 🔍 Key Findings
+## Key Findings
 
 | Tradition Type | Decay Rate (λ) | Survival Pattern |
 |----------------|----------------|------------------|
@@ -51,7 +51,7 @@ Each child represents an independent Bernoulli trial for tradition inheritance:
 - Joint tradition survival drops exponentially each generation
 - Entropy analysis reveals information-rich preservation targets
 
-## 🛠️ Technical Implementation
+##  Technical Implementation
 
 ### Technologies Used
 - Python for probabilistic modeling
@@ -66,7 +66,7 @@ Each child represents an independent Bernoulli trial for tradition inheritance:
 4. **Entropy Analysis**: Information theory application
 5. **Predictive Simulation**: Cultural loss forecasting
 
-## 📈 Applications & Impact
+## Applications & Impact
 
 ### Direct Applications
 1. **Endangered Language Preservation**
